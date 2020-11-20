@@ -7,10 +7,12 @@ import com.ma.crm.base.bean.MessageVo;
 import com.ma.crm.base.bean.PaginationVo;
 import com.ma.crm.base.constants.CrmConstants;
 import com.ma.crm.base.exception.CrmException;
+import com.ma.crm.base.utils.UUIDUtil;
 import com.ma.crm.settings.bean.User;
 import com.ma.crm.settings.service.UserService;
 import com.ma.crm.workbench.bean.Activity;
 import com.ma.crm.workbench.bean.ActivityQueryVo;
+import com.ma.crm.workbench.bean.ActivityRemark;
 import com.ma.crm.workbench.service.ActivityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +47,8 @@ public class ActivityController {
     private UserService userService;
 
 
-    //查询所有信息并分页  注意：该方法只能通过异步查询，否则返回的数据无法正常显示在页面上
+    //查询所有信息并分页
+    // 注意：该方法只能通过异步查询，否则返回的数据无法正常显示在页面上
     @RequestMapping("/workbench/queryAllActivity")
     public @ResponseBody PaginationVo queryAllActivity(@RequestParam(defaultValue = "1") int pageNo,
                                                        @RequestParam(defaultValue = "2") int pageSize,
@@ -143,5 +147,79 @@ public class ActivityController {
             messageVo.setMess(e.getMessage());
         }
         return messageVo;
+    }
+
+    @RequestMapping("/workbench/activity/queryActivityDetail")
+    public String queryActivityDetail(String id,Model model){
+        Activity activity=activityService.queryActivityDetailById(id);
+        model.addAttribute("activity",activity);
+        return "/activity/detail";
+    }
+
+    //修改备注
+    @RequestMapping("/workbench/activity/updateActivityRemark")
+    public @ResponseBody MessageVo updateActivityRemark(ActivityRemark activityRemark,HttpSession session){
+        User user = (User) session.getAttribute(CrmConstants.LOGIN_USER);
+        activityRemark.setEditBy(user.getName());
+        MessageVo messageVo = new MessageVo();
+        try{
+            activityService.updateActivityRemarkById(activityRemark);
+            messageVo.setSuccess(true);
+            messageVo.setMess("市场活动备注更新成功");
+        }catch (CrmException e){
+            messageVo.setSuccess(false);
+            messageVo.setMess(e.getMessage());
+        }
+        return messageVo;
+    }
+    //删除备注
+    @RequestMapping("/workbench/activity/deleteActivityRemark")
+    public @ResponseBody MessageVo deleteActivityRemark(String id){
+        MessageVo messageVo = new MessageVo();
+        try{
+            activityService.deleteActivityRemark(id);
+            messageVo.setSuccess(true);
+            messageVo.setMess("市场活动备注删除成功");
+        }catch (CrmException e){
+            messageVo.setSuccess(false);
+            messageVo.setMess(e.getMessage());
+        }
+        return messageVo;
+    }
+
+    //添加备注
+    @RequestMapping("/workbench/activity/addNoteContent")
+    public @ResponseBody MessageVo addNoteContent(ActivityRemark activityRemark, HttpSession session, HttpServletRequest request){
+        User user = (User) session.getAttribute(CrmConstants.LOGIN_USER);
+        activityRemark.setId(UUIDUtil.getUUID());
+        activityRemark.setCreateBy(user.getName());
+        activityRemark.setEditBy(user.getName());
+        MessageVo messageVo = new MessageVo();
+        try{
+            activityService.addNoteContent(activityRemark);
+            messageVo.setSuccess(true);
+            messageVo.setMess("市场活动备注添加成功");
+        }catch (CrmException e){
+            messageVo.setSuccess(false);
+            messageVo.setMess(e.getMessage());
+        }
+
+        request.setAttribute("addactivityremark",activityRemark);
+
+        return messageVo;
+    }
+
+    @RequestMapping("/workbench/activity/deleteActivityInfo")
+    public String deleteActivityInfo(String id){
+        MessageVo messageVo=new MessageVo();
+        try{
+            activityService.deleteActivityInfo(id);
+            messageVo.setSuccess(true);
+            messageVo.setMess("市场活动备注添加成功");
+        }catch(CrmException e){
+            messageVo.setSuccess(true);
+            messageVo.setMess("市场活动备注添加成功");
+        }
+        return "redirect:/toView/activity/index";
     }
 }

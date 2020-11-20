@@ -106,7 +106,7 @@
             </div>
             <div class="modal-body">
 
-                <form class="form-horizontal" role="form">
+                <form id="updateform" class="form-horizontal" role="form">
                     <input type="hidden" name="id" id="id"/>
 
                     <div class="form-group">
@@ -274,25 +274,36 @@
 
     //修改 异步提交请求
     $('#update').click(function () {
-        $.ajax({
-            url:'/crm/workbench/activity/updateActivity',
-            data:{"owner":$('#edit-marketActivityOwner').val(),
-                  "name":$('#edit-marketActivityName').val(),
-                  "startDate":$('#edit-startTime').val(),
-                  "endDate":$('#edit-endTime').val(),
-                  "cost":$('#edit-cost').val(),
-                  "description":$('#edit-describe').val(),
-                  "id":$('#id').val()},
-            dataType:'json',
-            type:'get',
-            success:function (data) {
-                //弹窗提示是否修改成功
-                alert(data.mess);
-                //重新加载页面的市场活动信息
-                pageList(1,2);
-            }
-        })
-    })
+        if($('#edit-marketActivityName').val()==''){
+            //校验必填信息是否为空
+            alert("请填写(加*)必填信息")
+        }else{
+            $.ajax({
+                url:'/crm/workbench/activity/updateActivity',
+                data:{//除了这种方式 还可以使用表单序列化转化成字符串 $('#updateform').serialize();
+                    // 文本格式应该是contentType: "application/json
+                    // 不写默认为application/x-www-form-urlencoded
+                    "owner":$('#edit-marketActivityOwner').val(),
+                    "name":$('#edit-marketActivityName').val(),
+                    "startDate":$('#edit-startTime').val(),
+                    "endDate":$('#edit-endTime').val(),
+                    "cost":$('#edit-cost').val(),
+                    "description":$('#edit-describe').val(),
+                    "id":$('#id').val()
+                },
+                dataType:'json',
+                type:'get',
+                //contentType: "application/json",
+                success:function (data) {
+                    //弹窗提示是否修改成功
+                    alert(data.mess);
+                    //重新加载页面的市场活动信息
+                    pageList(1,2);
+                }
+            })
+        }
+
+    });
 
     //异步查询选中的市场信息 回写到修改页面
     $("#update-btn").click(function () {
@@ -311,7 +322,7 @@
                     $('#edit-cost').val(dataa.cost);
                     $('#edit-describe').val(dataa.description);
                     $("#id").val(dataa.id);
-                    alert(dataa.owner)
+                    //alert(dataa.owner)
 
                     //查询所有者 拼接到select中
                     var uid = dataa.owner;
@@ -364,34 +375,40 @@
         // alert($("#create-endTime").val())
         // alert($("#create-cost").val())
         // alert($("#create-describe").val())
+        if($('#create-marketActivityName').val()==''){
+            //校验必填信息是否为空
+            alert("请填写(加*)必填信息")
+        }else{
+            //每次保存清除之前的数据  异步请求会保留之前的数据
+            $.ajax({
+                url: "/crm/workbench/activity/saveActivity",
+                data: {
+                    "owner": $("#create-marketActivityOwner").val(),
+                    "name": $("#create-marketActivityName").val(),
+                    "startDate": $("#create-startTime").val(),
+                    "endDate": $("#create-endTime").val(),
+                    "cost": $("#create-cost").val(),
+                    "decription": $("#create-describe").val()
+                },
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    //console.log(data)
+                    //弹窗提示是否保存成功
+                    alert(data.mess)
+                    //将之前的一些信息清空
+                    $("#create-marketActivityName").val("");
+                    $("#create-startTime").val("");
+                    $("#create-endTime").val("");
+                    $("#create-cost").val("");
+                    $("#create-describe").val("");
+                    pageList(1,2);
+                }
+                //$("#create-form").submit();
 
-        //每次保存清除之前的数据  异步请求会保留之前的数据
-        $.ajax({
-            url: "/crm/workbench/activity/saveActivity",
-            data: {
-                "owner": $("#create-marketActivityOwner").val(),
-                "name": $("#create-marketActivityName").val(),
-                "startDate": $("#create-startTime").val(),
-                "endDate": $("#create-endTime").val(),
-                "cost": $("#create-cost").val(),
-                "decription": $("#create-describe").val()
-            },
-            type: 'get',
-            dataType: 'json',
-            success: function (data) {
-                //console.log(data)
-                //弹窗提示是否保存成功
-                alert(data.mess)
-                //将之前的一些信息清空
-                $("#create-marketActivityName").val("");
-                $("#create-startTime").val("");
-                $("#create-endTime").val("");
-                $("#create-cost").val("");
-                $("#create-describe").val("");
-                pageList(1,2);
-            }
-        })
-        //$("#create-form").submit();
+            })
+        }
+
     }
 
     //异步查询所有用户的姓名 显示在添加页面
@@ -444,7 +461,7 @@
                     //拼接数据
                     $("#showActivity").append("<tr class=\"active\">\n" +
                         "<td><input class='son'type='checkbox' value=" + data.list[i].id + "  /></td>\n" +
-                        "<td><a style=\"text-decoration: none; cursor: pointer;\" onclick=\"window.location.href='detail.jsp';\">" + data.list[i].name + "</a></td>\n" +
+                        "<td><a style=\"text-decoration: none; cursor: pointer;\" href=/crm/workbench/activity/queryActivityDetail?id="+data.list[i].id+">" + data.list[i].name + "</a></td>\n" +
                         "<td>" + data.list[i].uname + "</td>\n" +
                         "<td>" + data.list[i].startDate + "</td>\n" +
                         "<td>" + data.list[i].endDate + "</td>\n" +

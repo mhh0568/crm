@@ -2,6 +2,7 @@ package com.ma.crm.workbench.service;
 
 import com.ma.crm.workbench.bean.Activity;
 import com.ma.crm.workbench.bean.ActivityQueryVo;
+import com.ma.crm.workbench.bean.ActivityRemark;
 
 import java.util.List;
 import java.util.Map;
@@ -27,4 +28,14 @@ public interface ActivityService {
     void updateActivity(Activity activity);
 
     void deleteActivity(String idstr);
+
+    Activity queryActivityDetailById(String id);
+
+    void updateActivityRemarkById(ActivityRemark activityRemark);
+
+    void deleteActivityRemark(String id);
+
+    void addNoteContent(ActivityRemark activityRemark);
+
+    void deleteActivityInfo(String id);
 }

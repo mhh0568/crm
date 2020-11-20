@@ -1,5 +1,7 @@
 package com.ma.crm.workbench.bean;
 
+import tk.mybatis.mapper.annotation.NameStyle;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,6 +16,7 @@ import javax.persistence.Table;
  * Copyright: Copyright (c) 2020
  */
 @Table(name = "tbl_activity_remark")
+@NameStyle
 public class ActivityRemark {
     @Id
     private String id;

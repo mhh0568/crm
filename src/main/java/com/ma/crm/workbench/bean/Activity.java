@@ -1,9 +1,11 @@
 package com.ma.crm.workbench.bean;
 
+import com.ma.crm.settings.bean.User;
 import tk.mybatis.mapper.annotation.NameStyle;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.List;
 
 /**
  * @ProjectName: crm
@@ -45,7 +47,29 @@ public class Activity {
                 ", createBy='" + createBy + '\'' +
                 ", editTime='" + editTime + '\'' +
                 ", editBy='" + editBy + '\'' +
+                ", user=" + user +
+                ", remarks=" + remarks +
                 '}';
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    private User user;
+
+    private List<ActivityRemark> remarks;
+
+    public List<ActivityRemark> getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(List<ActivityRemark> remarks) {
+        this.remarks = remarks;
     }
 
     public String getId() {
