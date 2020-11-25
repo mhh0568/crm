@@ -27,6 +27,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    //用户登录
     @RequestMapping("/settings/user/login")
     public String login(User user, Model model, HttpServletRequest request, HttpSession session){
         String ip = request.getRemoteAddr();
@@ -42,6 +43,14 @@ public class UserController {
             return "../../login";
         }
         return "index";
+    }
 
+    //退出登录
+    @RequestMapping("/setting/loginOut")
+    public String loginOut(HttpSession session){
+        if(session.getAttribute(CrmConstants.LOGIN_USER)!=null){
+            session.removeAttribute(CrmConstants.LOGIN_USER);
+        }
+        return "redirect:/login.jsp";
     }
 }

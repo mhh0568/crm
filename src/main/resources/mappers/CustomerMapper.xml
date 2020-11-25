@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ma.crm.workbench.mapper.CustomerMapper">
+
+    <resultMap id="customerUserMap" type="customer">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="owner" column="owner"/>
+        <result property="website" column="website"/>
+        <result property="phone" column="phone"/>
+        <result property="createBy" column="createBy"/>
+        <result property="createTime" column="createTime"/>
+        <result property="editBy" column="editBy"/>
+        <result property="editTime" column="editTime"/>
+        <result property="contactSummary" column="contactSummary"/>
+        <result property="nextContactTime" column="nextContactTime"/>
+        <result property="description" column="description"/>
+        <result property="address" column="address"/>
+        <association property="user" javaType="user">
+            <id property="id" column="uid"></id>
+            <result property="name" column="uname"></result>
+        </association>
+    </resultMap>
+    <select id="queryCustomer" resultMap="customerUserMap">
+        select c.*,u.id uid,u.name uname from tbl_customer c left join tbl_user u on c.owner=u.id
+        <where>
+            <if test="name!=null and name!=''">
+                c.name like '%' #{name} '%'
+            </if>
+            <if test="owner!=null and owner!=''">
+                and u.name like concat('%',#{owner},'%')
+            </if>
+            <if test="phone!=null and phone!=''">
+                and phone like concat('%',#{phone},'%')
+            </if>
+            <if test="website!=null and website!=''">
+                and website like concat('%',#{website},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

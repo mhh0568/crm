@@ -16,8 +16,8 @@
         <result property="editTime" column="editTime"/>
         <result property="editBy" column="editBy"/>
         <association property="user" javaType="user">
-            <id property="id" column="uid"></id>
-            <result property="name" column="uname"></result>
+            <id property="id" column="uid"/>
+            <result property="name" column="uname"/>
         </association>
         <collection property="remarks" ofType="activityRemark" >
             <id property="id" column="arid"/>

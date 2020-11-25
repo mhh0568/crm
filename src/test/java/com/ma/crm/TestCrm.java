@@ -26,7 +26,7 @@ public class TestCrm {
 
     @Test
     public void test02(){
-        String zs = MD5Util.getMD5("ls");
+        String zs = MD5Util.getMD5("zs");
         System.out.println(zs);
     }
 

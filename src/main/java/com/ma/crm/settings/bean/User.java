@@ -2,6 +2,7 @@ package com.ma.crm.settings.bean;
 
 import tk.mybatis.mapper.annotation.NameStyle;
 
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 @Table(name = "tbl_user")
 @NameStyle
 public class User {
+    @Id
     private String id;
     private String loginAct;
     private String name;
